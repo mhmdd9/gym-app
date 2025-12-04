@@ -167,5 +167,12 @@ public class AuthService {
         refreshTokenRepository.revokeAllByUser(user);
         log.info("User logged out: {}", user.getPhoneNumber());
     }
+
+    @Transactional(readOnly = true)
+    public UserDto getUserById(Long userId) {
+        User user = userRepository.findByIdWithRoles(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+        return UserDto.from(user);
+    }
 }
 

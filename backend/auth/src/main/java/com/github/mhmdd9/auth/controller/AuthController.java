@@ -52,14 +52,8 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserDto>> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
-        // This would need a method in AuthService to get user by ID
-        // For now, we'll keep it simple
-        return ResponseEntity.ok(ApiResponse.success(
-                UserDto.builder()
-                        .id(principal.getId())
-                        .phoneNumber(principal.getPhoneNumber())
-                        .build()
-        ));
+        UserDto user = authService.getUserById(principal.getId());
+        return ResponseEntity.ok(ApiResponse.success(user));
     }
 }
 
