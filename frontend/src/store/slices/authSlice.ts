@@ -38,7 +38,7 @@ export const sendOtp = createAsyncThunk(
   async (phoneNumber: string, { rejectWithValue }) => {
     try {
       const response = await authApi.login({ phoneNumber })
-      return { phoneNumber, ...response.data }
+      return { phoneNumber, ...response.data.data } // Extract nested data
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to send OTP')
     }
@@ -50,7 +50,7 @@ export const verifyOtp = createAsyncThunk(
   async ({ phoneNumber, code }: { phoneNumber: string; code: string }, { rejectWithValue }) => {
     try {
       const response = await authApi.verifyOtp({ phoneNumber, code })
-      return response.data
+      return response.data.data // Extract the nested auth data
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Invalid OTP')
     }
@@ -62,9 +62,24 @@ export const signup = createAsyncThunk(
   async (data: { phoneNumber: string; firstName?: string; lastName?: string }, { rejectWithValue }) => {
     try {
       const response = await authApi.signup(data)
-      return { phoneNumber: data.phoneNumber, ...response.data }
+      return { phoneNumber: data.phoneNumber, ...response.data.data } // Extract nested data
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Signup failed')
+    }
+  }
+)
+
+export const fetchCurrentUser = createAsyncThunk(
+  'auth/fetchCurrentUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authApi.me()
+      return response.data.data
+    } catch (error: any) {
+      // If fetching user fails (e.g., token expired), clear auth state
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch user')
     }
   }
 )
@@ -151,6 +166,21 @@ const authSlice = createSlice({
       })
       // Logout
       .addCase(logout.fulfilled, (state) => {
+        state.user = null
+        state.accessToken = null
+        state.refreshToken = null
+        state.isAuthenticated = false
+      })
+      // Fetch Current User
+      .addCase(fetchCurrentUser.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.user = action.payload
+      })
+      .addCase(fetchCurrentUser.rejected, (state) => {
+        state.isLoading = false
         state.user = null
         state.accessToken = null
         state.refreshToken = null

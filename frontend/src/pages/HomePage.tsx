@@ -135,31 +135,6 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Upcoming Classes */}
-        <h2 className="text-lg font-semibold text-white mb-4">کلاس‌های پیش‌رو</h2>
-        <div className="space-y-4">
-          {[
-            { name: 'یوگا صبحگاهی', time: '۰۸:۰۰ - ۰۹:۳۰', trainer: 'مریم احمدی', spots: 5 },
-            { name: 'بدنسازی', time: '۱۰:۰۰ - ۱۱:۳۰', trainer: 'علی رضایی', spots: 3 },
-            { name: 'ایروبیک', time: '۱۴:۰۰ - ۱۵:۰۰', trainer: 'سارا محمدی', spots: 8 },
-          ].map((cls, i) => (
-            <div key={i} className="card flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center text-primary-400 font-bold">
-                  {cls.name.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="text-white font-medium">{cls.name}</h3>
-                  <p className="text-slate-400 text-sm">{cls.trainer} • {cls.time}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-slate-400">{cls.spots} جای خالی</span>
-                <button className="btn btn-primary text-sm">رزرو</button>
-              </div>
-            </div>
-          ))}
-        </div>
       </main>
     </div>
   )

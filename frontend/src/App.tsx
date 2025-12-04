@@ -1,6 +1,9 @@
+import { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { ROLES } from './hooks/usePermission'
+import { useAppDispatch, useAppSelector } from './hooks/redux'
+import { fetchCurrentUser } from './store/slices/authSlice'
 import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import UnauthorizedPage from './pages/UnauthorizedPage'
@@ -11,6 +14,16 @@ import ReservationsPage from './pages/ReservationsPage'
 import ProfilePage from './pages/ProfilePage'
 
 function App() {
+  const dispatch = useAppDispatch()
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth)
+
+  useEffect(() => {
+    // Fetch user data if authenticated but user is not loaded
+    if (isAuthenticated && !user) {
+      dispatch(fetchCurrentUser())
+    }
+  }, [dispatch, isAuthenticated, user])
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <Routes>

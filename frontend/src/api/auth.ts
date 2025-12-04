@@ -21,20 +21,22 @@ interface OtpResponse {
   message: string
 }
 
+interface User {
+  id: number
+  phoneNumber: string
+  email?: string
+  firstName?: string
+  lastName?: string
+  fullName?: string
+  roles: string[]
+}
+
 interface AuthResponse {
   accessToken: string
   refreshToken: string
   tokenType: string
   expiresIn: number
-  user: {
-    id: number
-    phoneNumber: string
-    email?: string
-    firstName?: string
-    lastName?: string
-    fullName?: string
-    roles: string[]
-  }
+  user: User
 }
 
 interface ApiResponse<T> {
@@ -58,6 +60,6 @@ export const authApi = {
 
   logout: () => apiClient.post('/v1/auth/logout'),
 
-  me: () => apiClient.get('/v1/auth/me'),
+  me: () => apiClient.get<ApiResponse<User>>('/v1/auth/me'),
 }
 
