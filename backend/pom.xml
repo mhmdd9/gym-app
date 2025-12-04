@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.gym</groupId>
+    <groupId>com.github.mhmdd9</groupId>
     <artifactId>gym-booking-saas</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -35,28 +35,29 @@
         <jjwt.version>0.12.3</jjwt.version>
         <bucket4j.version>8.7.0</bucket4j.version>
         <lombok.version>1.18.30</lombok.version>
+        <flyway.version>10.15.2</flyway.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <!-- Internal modules -->
             <dependency>
-                <groupId>com.gym</groupId>
+                <groupId>com.github.mhmdd9</groupId>
                 <artifactId>common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.gym</groupId>
+                <groupId>com.github.mhmdd9</groupId>
                 <artifactId>auth</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.gym</groupId>
+                <groupId>com.github.mhmdd9</groupId>
                 <artifactId>club</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.gym</groupId>
+                <groupId>com.github.mhmdd9</groupId>
                 <artifactId>booking</artifactId>
                 <version>${project.version}</version>
             </dependency>

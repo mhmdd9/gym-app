@@ -3,7 +3,7 @@ spring:
     name: gym-booking-saas
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/gym_booking
+    url: jdbc:postgresql://localhost:5433/gym_booking
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -44,6 +44,6 @@ otp:
 
 logging:
   level:
-    com.gym: DEBUG
+    com.github.mhmdd9: DEBUG
     org.springframework.security: DEBUG
 
