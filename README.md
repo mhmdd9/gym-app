@@ -17,7 +17,7 @@ A modular monolith booking system for gyms in Iran.
 - Spring Security (JWT + OTP Authentication)
 - Spring Data JPA
 - PostgreSQL
-- Gradle (Multi-module)
+- Maven (Multi-module)
 
 ### Frontend
 - React 18 + TypeScript
@@ -36,7 +36,13 @@ A modular monolith booking system for gyms in Iran.
 ### Backend Setup
 ```bash
 cd backend
-./gradlew bootRun
+./mvnw spring-boot:run -pl app
+```
+
+Or on Windows:
+```bash
+cd backend
+mvnw.cmd spring-boot:run -pl app
 ```
 
 ### Frontend Setup
