@@ -22,14 +22,14 @@ interface OtpResponse {
 }
 
 interface User {
-  id: number
-  phoneNumber: string
-  email?: string
-  firstName?: string
-  lastName?: string
-  fullName?: string
-  roles: string[]
-}
+    id: number
+    phoneNumber: string
+    email?: string
+    firstName?: string
+    lastName?: string
+    fullName?: string
+    roles: string[]
+  }
 
 interface AuthResponse {
   accessToken: string

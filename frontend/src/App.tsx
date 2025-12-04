@@ -12,6 +12,7 @@ import ClubDetailsPage from './pages/ClubDetailsPage'
 import ClassesPage from './pages/ClassesPage'
 import ReservationsPage from './pages/ReservationsPage'
 import ProfilePage from './pages/ProfilePage'
+import AdminUsersPage from './pages/AdminUsersPage'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -100,11 +101,18 @@ function App() {
 
         {/* Admin-only routes */}
         <Route
-          path="/admin/*"
+          path="/admin/users"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+              <AdminUsersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER]}>
-              {/* TODO: Add admin dashboard component */}
-              <div className="text-white p-8">Admin Dashboard (Coming Soon)</div>
+              <Navigate to="/admin/users" replace />
             </ProtectedRoute>
           }
         />

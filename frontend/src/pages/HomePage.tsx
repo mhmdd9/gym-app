@@ -66,6 +66,18 @@ export default function HomePage() {
           <>
             <h2 className="text-lg font-semibold text-white mb-4">پنل مدیریت</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {hasRole(ROLES.ADMIN) && (
+                <Link
+                  to="/admin/users"
+                  className="card text-right hover:border-red-500/50 transition-colors group cursor-pointer border-red-500/20"
+                >
+                  <span className="text-3xl mb-3 block">👥</span>
+                  <h3 className="text-white font-medium group-hover:text-red-400 transition-colors">
+                    مدیریت کاربران
+                  </h3>
+                  <p className="text-slate-500 text-sm">کاربران و نقش‌ها</p>
+                </Link>
+              )}
               {canManageClubs && (
                 <Link
                   to="/admin/clubs"
