@@ -4,6 +4,11 @@ import { ROLES } from './hooks/usePermission'
 import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import UnauthorizedPage from './pages/UnauthorizedPage'
+import ClubsPage from './pages/ClubsPage'
+import ClubDetailsPage from './pages/ClubDetailsPage'
+import ClassesPage from './pages/ClassesPage'
+import ReservationsPage from './pages/ReservationsPage'
+import ProfilePage from './pages/ProfilePage'
 
 function App() {
   return (
@@ -32,7 +37,55 @@ function App() {
           }
         />
 
-        {/* Admin-only routes (example for future) */}
+        {/* Clubs routes */}
+        <Route
+          path="/clubs"
+          element={
+            <ProtectedRoute>
+              <ClubsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/clubs/:id"
+          element={
+            <ProtectedRoute>
+              <ClubDetailsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Classes route */}
+        <Route
+          path="/classes"
+          element={
+            <ProtectedRoute>
+              <ClassesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Reservations route */}
+        <Route
+          path="/reservations"
+          element={
+            <ProtectedRoute>
+              <ReservationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Profile route */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin-only routes */}
         <Route
           path="/admin/*"
           element={
@@ -43,7 +96,7 @@ function App() {
           }
         />
 
-        {/* Staff-only routes (example for future) */}
+        {/* Staff-only routes */}
         <Route
           path="/staff/*"
           element={
@@ -62,4 +115,3 @@ function App() {
 }
 
 export default App
-
