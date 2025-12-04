@@ -1,6 +1,5 @@
 import axios from 'axios'
-import { store } from '../store'
-import { setCredentials } from '../store/slices/authSlice'
+import type { AppDispatch } from '../store'
 
 const API_BASE_URL = '/api'
 
@@ -10,6 +9,13 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 })
+
+// Lazy store reference to break circular dependency
+let storeInstance: { dispatch: AppDispatch } | null = null
+
+export const setStoreInstance = (store: { dispatch: AppDispatch }) => {
+  storeInstance = store
+}
 
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
@@ -43,7 +49,15 @@ apiClient.interceptors.response.use(
 
           const { accessToken, refreshToken: newRefreshToken, user } = response.data.data
           
-          store.dispatch(setCredentials({ accessToken, refreshToken: newRefreshToken, user }))
+          // Use lazy import to avoid circular dependency
+          if (storeInstance) {
+            const { setCredentials } = await import('../store/slices/authSlice')
+            storeInstance.dispatch(setCredentials({ 
+              accessToken, 
+              refreshToken: newRefreshToken, 
+              user 
+            }))
+          }
 
           originalRequest.headers.Authorization = `Bearer ${accessToken}`
           return apiClient(originalRequest)

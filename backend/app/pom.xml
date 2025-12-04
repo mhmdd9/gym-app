@@ -65,6 +65,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <skip>false</skip>
                     <mainClass>com.github.mhmdd9.GymBookingApplication</mainClass>
                     <finalName>gym-booking-saas</finalName>
                 </configuration>
@@ -79,4 +80,3 @@
         </plugins>
     </build>
 </project>
-
