@@ -3,6 +3,7 @@ package com.github.mhmdd9.booking.controller;
 import com.github.mhmdd9.booking.dto.ApproveMembershipRequest;
 import com.github.mhmdd9.booking.dto.PurchaseMembershipRequest;
 import com.github.mhmdd9.booking.dto.UserMembershipDto;
+import com.github.mhmdd9.booking.dto.UserSearchResult;
 import com.github.mhmdd9.booking.dto.ValidateMembershipResponse;
 import com.github.mhmdd9.booking.service.MembershipService;
 import com.github.mhmdd9.common.dto.ApiResponse;
@@ -105,6 +106,14 @@ public class MembershipController {
             @PathVariable Long clubId) {
         ValidateMembershipResponse response = membershipService.validateMembership(userId, clubId);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/search-users")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GYM_OWNER', 'MANAGER', 'RECEPTIONIST', 'TRAINER')")
+    public ResponseEntity<ApiResponse<List<UserSearchResult>>> searchUsers(
+            @RequestParam String phone) {
+        List<UserSearchResult> results = membershipService.searchUsersByPhone(phone);
+        return ResponseEntity.ok(ApiResponse.success(results));
     }
 
     @GetMapping("/user/{userId}")

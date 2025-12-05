@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.mhmdd9.booking.dto.UserSearchResult;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -199,6 +201,24 @@ public class MembershipService {
     public List<UserMembershipDto> getMembershipsByPlan(Long planId) {
         List<UserMembership> memberships = membershipRepository.findByPlanIdOrderByCreatedAtDesc(planId);
         return enrichMemberships(memberships);
+    }
+
+    /**
+     * Search users by phone number (for staff check-in)
+     */
+    public List<UserSearchResult> searchUsersByPhone(String phone) {
+        if (phone == null || phone.trim().length() < 3) {
+            return List.of();
+        }
+        
+        return userRepository.searchByPhoneNumber(phone.trim()).stream()
+                .limit(10) // Limit results
+                .map(user -> UserSearchResult.builder()
+                        .id(user.getId())
+                        .phoneNumber(user.getPhoneNumber())
+                        .fullName(user.getFullName())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     // Keep for backward compatibility - staff can directly create active membership

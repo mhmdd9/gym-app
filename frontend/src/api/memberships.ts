@@ -8,6 +8,7 @@ import type {
   ValidateMembershipResponse,
   Attendance,
   CheckInRequest,
+  UserSearchResult,
 } from '../types'
 
 // Membership Plans API
@@ -55,6 +56,9 @@ export const requestMembership = (data: PurchaseMembershipRequest): Promise<ApiR
 
 export const validateMembership = (userId: number, clubId: number): Promise<ApiResponse<ValidateMembershipResponse>> =>
   api.get(`/v1/memberships/validate/${userId}/club/${clubId}`).then((res) => res.data)
+
+export const searchUsersByPhone = (phone: string): Promise<ApiResponse<UserSearchResult[]>> =>
+  api.get('/v1/memberships/search-users', { params: { phone } }).then((res) => res.data)
 
 export const getUserMemberships = (userId: number): Promise<ApiResponse<UserMembership[]>> =>
   api.get(`/v1/memberships/user/${userId}`).then((res) => res.data)

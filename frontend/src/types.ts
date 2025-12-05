@@ -317,3 +317,10 @@ export interface CheckInRequest {
   notes?: string
 }
 
+// User search result for check-in
+export interface UserSearchResult {
+  id: number
+  phoneNumber: string
+  fullName?: string
+}
+

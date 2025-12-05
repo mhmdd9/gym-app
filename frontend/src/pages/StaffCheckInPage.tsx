@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { clubsApi } from '../api/clubs'
 import * as membershipsApi from '../api/memberships'
 import { SearchableClubSelect } from '../components/SearchableClubSelect'
-import type { Club, ValidateMembershipResponse, Attendance, UserMembership } from '../types'
+import type { Club, ValidateMembershipResponse, Attendance, UserMembership, UserSearchResult } from '../types'
 
 // Status config
 const membershipStatusConfig: Record<string, { label: string; className: string }> = {
@@ -31,8 +31,15 @@ export default function StaffCheckInPage() {
   // Search state
   const [searchPhone, setSearchPhone] = useState('')
   const [searchUserId, setSearchUserId] = useState<number | null>(null)
+  const [selectedUserName, setSelectedUserName] = useState<string | null>(null)
   const [isSearching, setIsSearching] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
+  
+  // User search results
+  const [userSearchResults, setUserSearchResults] = useState<UserSearchResult[]>([])
+  const [isSearchingUsers, setIsSearchingUsers] = useState(false)
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false)
+  const searchContainerRef = useRef<HTMLDivElement>(null)
 
   // Validation state
   const [validation, setValidation] = useState<ValidateMembershipResponse | null>(null)
@@ -58,6 +65,42 @@ export default function StaffCheckInPage() {
       fetchTodayAttendance(selectedClubId)
     }
   }, [selectedClubId])
+
+  // Search users by phone (debounced)
+  useEffect(() => {
+    if (searchPhone.length < 3) {
+      setUserSearchResults([])
+      setShowSearchDropdown(false)
+      return
+    }
+
+    const timeoutId = setTimeout(async () => {
+      try {
+        setIsSearchingUsers(true)
+        const response = await membershipsApi.searchUsersByPhone(searchPhone)
+        setUserSearchResults(response.data)
+        setShowSearchDropdown(true)
+      } catch (err) {
+        console.error('Error searching users:', err)
+      } finally {
+        setIsSearchingUsers(false)
+      }
+    }, 300)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchPhone])
+
+  // Handle click outside search dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setShowSearchDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const fetchClubs = async () => {
     try {
@@ -86,19 +129,15 @@ export default function StaffCheckInPage() {
     }
   }
 
-  const handleSearch = async () => {
+  const selectUser = async (user: UserSearchResult) => {
     if (!selectedClubId) {
       setSearchError('باشگاه انتخاب نشده است')
       return
     }
 
-    // For now, we'll use a simplified search - in production, you'd search users by phone
-    // and get their user ID. Here we'll assume the phone number contains the user ID for testing.
-    const userId = parseInt(searchPhone)
-    if (isNaN(userId)) {
-      setSearchError('شماره تلفن یا شناسه کاربر نامعتبر است')
-      return
-    }
+    setSearchPhone(user.phoneNumber)
+    setSelectedUserName(user.fullName || null)
+    setShowSearchDropdown(false)
 
     try {
       setIsSearching(true)
@@ -109,12 +148,44 @@ export default function StaffCheckInPage() {
       setCheckInSuccess(null)
 
       // Validate membership
-      const validationResponse = await membershipsApi.validateMembership(userId, selectedClubId)
+      const validationResponse = await membershipsApi.validateMembership(user.id, selectedClubId)
       setValidation(validationResponse.data)
-      setSearchUserId(userId)
+      setSearchUserId(user.id)
 
       // Get user memberships
-      const membershipsResponse = await membershipsApi.getUserActiveMemberships(userId)
+      const membershipsResponse = await membershipsApi.getUserActiveMemberships(user.id)
+      setUserMemberships(membershipsResponse.data)
+
+      if (membershipsResponse.data.length > 0) {
+        setSelectedMembershipId(membershipsResponse.data[0].id)
+      }
+    } catch (err: any) {
+      setSearchError(err.response?.data?.message || 'خطا در جستجوی کاربر')
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  const handleSearch = async () => {
+    if (!selectedClubId) {
+      setSearchError('باشگاه انتخاب نشده است')
+      return
+    }
+
+    if (!searchUserId) {
+      setSearchError('ابتدا یک کاربر را از لیست انتخاب کنید')
+      return
+    }
+
+    // User already selected, just refresh
+    try {
+      setIsSearching(true)
+      setSearchError(null)
+
+      const validationResponse = await membershipsApi.validateMembership(searchUserId, selectedClubId)
+      setValidation(validationResponse.data)
+
+      const membershipsResponse = await membershipsApi.getUserActiveMemberships(searchUserId)
       setUserMemberships(membershipsResponse.data)
 
       if (membershipsResponse.data.length > 0) {
@@ -163,11 +234,14 @@ export default function StaffCheckInPage() {
   const resetSearch = () => {
     setSearchPhone('')
     setSearchUserId(null)
+    setSelectedUserName(null)
     setValidation(null)
     setUserMemberships([])
     setSelectedMembershipId(null)
     setSearchError(null)
     setCheckInSuccess(null)
+    setUserSearchResults([])
+    setShowSearchDropdown(false)
   }
 
   const selectedClub = clubs.find((c) => c.id === selectedClubId)
@@ -214,35 +288,85 @@ export default function StaffCheckInPage() {
             <div className="card">
               <h2 className="text-lg font-semibold text-white mb-4">جستجوی کاربر</h2>
 
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  value={searchPhone}
-                  onChange={(e) => setSearchPhone(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  className="input-field flex-1"
-                  placeholder="شناسه کاربر یا شماره تلفن..."
-                  dir="rtl"
-                />
-                <button
-                  onClick={handleSearch}
-                  disabled={isSearching || !searchPhone.trim()}
-                  className="btn btn-primary disabled:opacity-50"
-                >
-                  {isSearching ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                  ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
+              <div className="flex gap-3" ref={searchContainerRef}>
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={searchPhone}
+                    onChange={(e) => {
+                      setSearchPhone(e.target.value)
+                      setSearchUserId(null)
+                      setSelectedUserName(null)
+                      setValidation(null)
+                      setUserMemberships([])
+                    }}
+                    onFocus={() => userSearchResults.length > 0 && setShowSearchDropdown(true)}
+                    className="input-field w-full"
+                    placeholder="شماره تلفن را وارد کنید..."
+                    dir="ltr"
+                  />
+                  
+                  {/* Loading indicator */}
+                  {isSearchingUsers && (
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary-500"></div>
+                    </div>
                   )}
+
+                  {/* Search Results Dropdown */}
+                  {showSearchDropdown && userSearchResults.length > 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-60 overflow-auto">
+                      {userSearchResults.map((user) => (
+                        <button
+                          key={user.id}
+                          type="button"
+                          onClick={() => selectUser(user)}
+                          className="w-full text-right px-4 py-3 hover:bg-slate-700 transition-colors flex items-center gap-3"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-xs font-bold">
+                            {user.fullName?.charAt(0) || '?'}
+                          </div>
+                          <div className="flex-1 text-right">
+                            <p className="text-white text-sm">{user.fullName || 'بدون نام'}</p>
+                            <p className="text-slate-400 text-xs" dir="ltr">{user.phoneNumber}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* No results message */}
+                  {showSearchDropdown && searchPhone.length >= 3 && !isSearchingUsers && userSearchResults.length === 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl px-4 py-3 text-slate-400 text-sm text-center">
+                      کاربری یافت نشد
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={resetSearch}
+                  disabled={!searchPhone}
+                  className="btn btn-secondary disabled:opacity-50"
+                  title="پاک کردن"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
+
+              {/* Selected user info */}
+              {searchUserId && selectedUserName && (
+                <div className="mt-4 p-3 rounded-lg bg-primary-500/10 border border-primary-500/30 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold">
+                    {selectedUserName.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">{selectedUserName}</p>
+                    <p className="text-slate-400 text-sm" dir="ltr">{searchPhone}</p>
+                  </div>
+                </div>
+              )}
 
               {searchError && (
                 <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
