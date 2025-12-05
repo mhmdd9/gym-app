@@ -45,5 +45,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("SELECT r FROM Reservation r WHERE r.status = 'PENDING_PAYMENT' " +
            "AND r.bookedAt < :expiryTime")
     List<Reservation> findExpiredPendingReservations(@Param("expiryTime") LocalDateTime expiryTime);
+
+    @Query("SELECT r FROM Reservation r WHERE r.clubId = :clubId " +
+           "AND r.status = 'PENDING_PAYMENT' ORDER BY r.bookedAt DESC")
+    List<Reservation> findPendingPaymentsByClub(@Param("clubId") Long clubId);
 }
 

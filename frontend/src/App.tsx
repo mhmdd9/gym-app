@@ -16,6 +16,7 @@ import AdminUsersPage from './pages/AdminUsersPage'
 import AdminClubsPage from './pages/AdminClubsPage'
 import AdminActivitiesPage from './pages/AdminActivitiesPage'
 import StaffSessionsPage from './pages/StaffSessionsPage'
+import StaffPaymentsPage from './pages/StaffPaymentsPage'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -149,8 +150,7 @@ function App() {
           path="/staff/payments"
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER, ROLES.RECEPTIONIST]}>
-              {/* TODO: Add payments component */}
-              <div className="text-white p-8">ثبت پرداخت (Coming Soon)</div>
+              <StaffPaymentsPage />
             </ProtectedRoute>
           }
         />

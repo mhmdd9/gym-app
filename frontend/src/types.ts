@@ -139,3 +139,43 @@ export interface PaginationParams {
   sort?: string
 }
 
+// Payment types
+export interface PendingPayment {
+  reservationId: number
+  userId: number
+  userPhoneNumber?: string
+  userFullName?: string
+  sessionId: number
+  activityName?: string
+  sessionDate?: string // YYYY-MM-DD
+  startTime?: string // HH:mm
+  endTime?: string // HH:mm
+  trainerName?: string
+  bookedAt: string // ISO datetime
+  clubId: number
+  clubName?: string
+}
+
+export interface Payment {
+  id: number
+  reservationId: number
+  userId: number
+  clubId: number
+  amount: number
+  currency: string
+  method: 'CASH' | 'CARD' | 'POS' | 'BANK_TRANSFER'
+  referenceNumber?: string
+  status: 'PENDING' | 'PAID' | 'REFUNDED' | 'FAILED'
+  paidAt?: string
+  recordedBy?: number
+  notes?: string
+}
+
+export interface RecordPaymentRequest {
+  reservationId: number
+  amount: number
+  method: 'CASH' | 'CARD' | 'POS' | 'BANK_TRANSFER'
+  referenceNumber?: string
+  notes?: string
+}
+
