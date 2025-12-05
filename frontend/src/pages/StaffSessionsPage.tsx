@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { clubsApi } from '../api/clubs'
 import { sessionsApi } from '../api/sessions'
+import PersianDatePicker from '../components/PersianDatePicker'
 import type { Club, ClassSession, Activity, Trainer, CreateClassSessionRequest } from '../types'
 
 // Status display config
@@ -443,13 +444,11 @@ export default function StaffSessionsPage() {
                 <label className="block text-slate-400 text-sm mb-2">
                   تاریخ <span className="text-red-400">*</span>
                 </label>
-                <input
-                  type="date"
-                  name="sessionDate"
+                <PersianDatePicker
                   value={formData.sessionDate}
-                  onChange={handleInputChange}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="input-field w-full"
+                  onChange={(date) => setFormData((prev) => ({ ...prev, sessionDate: date }))}
+                  minDate={new Date().toISOString().split('T')[0]}
+                  placeholder="انتخاب تاریخ"
                 />
               </div>
 
