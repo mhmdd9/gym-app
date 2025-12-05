@@ -33,6 +33,42 @@ export interface Club {
   closingTime?: string // HH:mm format
 }
 
+// Activity types
+export interface Activity {
+  id: number
+  clubId: number
+  name: string
+  description?: string
+  durationMinutes: number
+  defaultCapacity: number
+  intensityLevel?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+  category?: string
+  isActive?: boolean
+}
+
+// Create activity request
+export interface CreateActivityRequest {
+  name: string
+  description?: string
+  durationMinutes: number
+  defaultCapacity: number
+  intensityLevel?: string
+  category?: string
+}
+
+// Trainer types
+export interface Trainer {
+  id: number
+  clubId: number
+  userId?: number
+  firstName: string
+  lastName: string
+  fullName: string
+  phoneNumber?: string
+  specialization?: string
+  bio?: string
+}
+
 // Class Session types
 export interface ClassSession {
   id: number
@@ -49,6 +85,18 @@ export interface ClassSession {
   bookedCount: number
   availableSpots: number
   status: 'SCHEDULED' | 'CANCELLED' | 'COMPLETED'
+}
+
+// Create session request
+export interface CreateClassSessionRequest {
+  activityId: number
+  trainerId?: number
+  clubId: number
+  sessionDate: string // YYYY-MM-DD
+  startTime: string // HH:mm
+  endTime: string // HH:mm
+  capacity: number
+  notes?: string
 }
 
 // Reservation types

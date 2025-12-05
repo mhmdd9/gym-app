@@ -14,5 +14,7 @@ public interface ActivityDefinitionRepository extends JpaRepository<ActivityDefi
     List<ActivityDefinition> findByClubIdAndCategoryAndIsActiveTrue(Long clubId, String category);
 
     List<ActivityDefinition> findByCategoryAndIsActiveTrue(String category);
+
+    List<ActivityDefinition> findAllByClubId(Long clubId);
 }
 

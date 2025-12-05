@@ -14,6 +14,8 @@ import ReservationsPage from './pages/ReservationsPage'
 import ProfilePage from './pages/ProfilePage'
 import AdminUsersPage from './pages/AdminUsersPage'
 import AdminClubsPage from './pages/AdminClubsPage'
+import AdminActivitiesPage from './pages/AdminActivitiesPage'
+import StaffSessionsPage from './pages/StaffSessionsPage'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -118,6 +120,14 @@ function App() {
           }
         />
         <Route
+          path="/admin/activities"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER]}>
+              <AdminActivitiesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin"
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER]}>
@@ -128,11 +138,28 @@ function App() {
 
         {/* Staff-only routes */}
         <Route
-          path="/staff/*"
+          path="/staff/sessions"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER, ROLES.TRAINER]}>
+              <StaffSessionsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/payments"
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER, ROLES.RECEPTIONIST]}>
-              {/* TODO: Add staff dashboard component */}
-              <div className="text-white p-8">Staff Dashboard (Coming Soon)</div>
+              {/* TODO: Add payments component */}
+              <div className="text-white p-8">ثبت پرداخت (Coming Soon)</div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/checkin"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER, ROLES.RECEPTIONIST]}>
+              {/* TODO: Add checkin component */}
+              <div className="text-white p-8">ورود به کلاس (Coming Soon)</div>
             </ProtectedRoute>
           }
         />

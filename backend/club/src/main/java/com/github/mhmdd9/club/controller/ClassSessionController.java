@@ -42,6 +42,16 @@ public class ClassSessionController {
     }
 
     /**
+     * Get all sessions for a club (staff management - includes all statuses).
+     */
+    @GetMapping("/club/{clubId}/manage")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GYM_OWNER', 'MANAGER', 'TRAINER')")
+    public ResponseEntity<ApiResponse<List<ClassSessionDto>>> getClubSessionsForManagement(@PathVariable Long clubId) {
+        List<ClassSessionDto> sessions = sessionService.getAllSessionsForManagement(clubId);
+        return ResponseEntity.ok(ApiResponse.success(sessions));
+    }
+
+    /**
      * Get session by ID (public).
      */
     @GetMapping("/{id}")

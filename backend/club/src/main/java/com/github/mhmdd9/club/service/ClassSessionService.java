@@ -36,6 +36,13 @@ public class ClassSessionService {
     }
 
     @Transactional(readOnly = true)
+    public List<ClassSessionDto> getAllSessionsForManagement(Long clubId) {
+        return sessionRepository.findAllSessionsByClub(clubId, LocalDate.now()).stream()
+                .map(ClassSessionDto::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<ClassSessionDto> getAvailableSessions(LocalDate date) {
         return sessionRepository.findAvailableSessionsByDate(date).stream()
                 .map(ClassSessionDto::from)

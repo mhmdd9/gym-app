@@ -62,5 +62,17 @@ public interface ClassSessionRepository extends JpaRepository<ClassSession, Long
             LocalDate startDate,
             LocalDate endDate
     );
+
+    @Query("SELECT cs FROM ClassSession cs " +
+           "JOIN FETCH cs.activity " +
+           "JOIN FETCH cs.club " +
+           "LEFT JOIN FETCH cs.trainer " +
+           "WHERE cs.club.id = :clubId " +
+           "AND cs.sessionDate >= :startDate " +
+           "ORDER BY cs.sessionDate, cs.startTime")
+    List<ClassSession> findAllSessionsByClub(
+            @Param("clubId") Long clubId,
+            @Param("startDate") LocalDate startDate
+    );
 }
 

@@ -90,6 +90,18 @@ export default function HomePage() {
                   <p className="text-slate-500 text-sm">افزودن و ویرایش باشگاه</p>
                 </Link>
               )}
+              {hasRole(ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER) && (
+                <Link
+                  to="/admin/activities"
+                  className="card text-right hover:border-cyan-500/50 transition-colors group cursor-pointer border-cyan-500/20"
+                >
+                  <span className="text-3xl mb-3 block">🏃</span>
+                  <h3 className="text-white font-medium group-hover:text-cyan-400 transition-colors">
+                    مدیریت فعالیت‌ها
+                  </h3>
+                  <p className="text-slate-500 text-sm">تعریف فعالیت‌های ورزشی</p>
+                </Link>
+              )}
               {canManageSessions && (
                 <Link
                   to="/staff/sessions"
