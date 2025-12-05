@@ -20,6 +20,7 @@ public class ActivityDto {
     private String intensityLevel;
     private String category;
     private Boolean isActive;
+    private String activityType;
 
     public static ActivityDto from(ActivityDefinition activity) {
         return ActivityDto.builder()
@@ -32,6 +33,7 @@ public class ActivityDto {
                 .intensityLevel(activity.getIntensityLevel() != null ? activity.getIntensityLevel().name() : null)
                 .category(activity.getCategory())
                 .isActive(activity.getIsActive())
+                .activityType(activity.getActivityType() != null ? activity.getActivityType().name() : "CLASS")
                 .build();
     }
 }

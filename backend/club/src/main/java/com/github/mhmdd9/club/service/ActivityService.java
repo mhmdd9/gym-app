@@ -53,6 +53,11 @@ public class ActivityService {
             level = ActivityDefinition.IntensityLevel.valueOf(request.getIntensityLevel());
         }
 
+        ActivityDefinition.ActivityType activityType = ActivityDefinition.ActivityType.CLASS;
+        if (request.getActivityType() != null && !request.getActivityType().isEmpty()) {
+            activityType = ActivityDefinition.ActivityType.valueOf(request.getActivityType());
+        }
+
         ActivityDefinition activity = ActivityDefinition.builder()
                 .club(club)
                 .name(request.getName())
@@ -61,11 +66,12 @@ public class ActivityService {
                 .defaultCapacity(request.getDefaultCapacity())
                 .intensityLevel(level)
                 .category(request.getCategory())
+                .activityType(activityType)
                 .isActive(true)
                 .build();
 
         activity = activityRepository.save(activity);
-        log.info("Created activity '{}' for club {}", activity.getName(), clubId);
+        log.info("Created activity '{}' (type: {}) for club {}", activity.getName(), activityType, clubId);
         return ActivityDto.from(activity);
     }
 
@@ -79,12 +85,18 @@ public class ActivityService {
             level = ActivityDefinition.IntensityLevel.valueOf(request.getIntensityLevel());
         }
 
+        ActivityDefinition.ActivityType activityType = activity.getActivityType();
+        if (request.getActivityType() != null && !request.getActivityType().isEmpty()) {
+            activityType = ActivityDefinition.ActivityType.valueOf(request.getActivityType());
+        }
+
         activity.setName(request.getName());
         activity.setDescription(request.getDescription());
         activity.setDurationMinutes(request.getDurationMinutes());
         activity.setDefaultCapacity(request.getDefaultCapacity());
         activity.setIntensityLevel(level);
         activity.setCategory(request.getCategory());
+        activity.setActivityType(activityType);
 
         activity = activityRepository.save(activity);
         log.info("Updated activity '{}'", activity.getName());

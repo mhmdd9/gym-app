@@ -74,5 +74,7 @@ public interface ClassSessionRepository extends JpaRepository<ClassSession, Long
             @Param("clubId") Long clubId,
             @Param("startDate") LocalDate startDate
     );
+
+    boolean existsByActivityIdAndClubIdAndSessionDate(Long activityId, Long clubId, LocalDate sessionDate);
 }
 

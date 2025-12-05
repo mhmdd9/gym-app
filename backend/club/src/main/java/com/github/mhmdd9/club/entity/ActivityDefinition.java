@@ -42,10 +42,20 @@ public class ActivityDefinition extends BaseEntity {
     @Builder.Default
     private Boolean isActive = true;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "activity_type", nullable = false, length = 20)
+    @Builder.Default
+    private ActivityType activityType = ActivityType.CLASS;
+
     public enum IntensityLevel {
         BEGINNER,
         INTERMEDIATE,
         ADVANCED
+    }
+
+    public enum ActivityType {
+        CLASS,      // Fixed time class with specific start/end
+        OPEN_GYM    // Flexible entry - users can come anytime during session hours
     }
 }
 

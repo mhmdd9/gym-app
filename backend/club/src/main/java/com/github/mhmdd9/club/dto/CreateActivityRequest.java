@@ -33,4 +33,6 @@ public class CreateActivityRequest {
 
     @Size(max = 100, message = "Category cannot exceed 100 characters")
     private String category;
+
+    private String activityType; // CLASS, OPEN_GYM (defaults to CLASS if not provided)
 }
