@@ -44,6 +44,7 @@ export interface Activity {
   intensityLevel?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
   category?: string
   isActive?: boolean
+  activityType?: 'CLASS' | 'OPEN_GYM'
 }
 
 // Create activity request
@@ -54,6 +55,7 @@ export interface CreateActivityRequest {
   defaultCapacity: number
   intensityLevel?: string
   category?: string
+  activityType?: string
 }
 
 // Trainer types
@@ -176,6 +178,142 @@ export interface RecordPaymentRequest {
   amount: number
   method: 'CASH' | 'CARD' | 'POS' | 'BANK_TRANSFER'
   referenceNumber?: string
+  notes?: string
+}
+
+// Payment History (enriched payment for admin view)
+export interface PaymentHistory {
+  id: number
+  reservationId?: number
+  membershipId?: number
+  userId: number
+  userFullName?: string
+  userPhone?: string
+  clubId: number
+  amount: number
+  currency: string
+  method: 'CASH' | 'CARD' | 'POS' | 'BANK_TRANSFER'
+  referenceNumber?: string
+  status: 'PENDING' | 'PAID' | 'REFUNDED' | 'FAILED'
+  paidAt?: string
+  recordedBy?: number
+  recordedByName?: string
+  notes?: string
+  paymentType: 'RESERVATION' | 'MEMBERSHIP'
+  activityName?: string
+  planName?: string
+}
+
+// Schedule types
+export interface Schedule {
+  id: number
+  clubId: number
+  clubName?: string
+  activityId: number
+  activityName?: string
+  activityType?: string
+  trainerId?: number
+  trainerName?: string
+  startTime: string // HH:mm
+  endTime: string // HH:mm
+  daysOfWeek: string[] // MONDAY, TUESDAY, etc.
+  validFrom: string // YYYY-MM-DD
+  validUntil?: string // YYYY-MM-DD
+  capacity?: number
+  isActive?: boolean
+  notes?: string
+}
+
+export interface CreateScheduleRequest {
+  activityId: number
+  trainerId?: number
+  startTime: string // HH:mm
+  endTime: string // HH:mm
+  daysOfWeek: string[] // MONDAY, TUESDAY, etc.
+  validFrom: string // YYYY-MM-DD
+  validUntil?: string // YYYY-MM-DD
+  capacity?: number
+  notes?: string
+}
+
+// Membership Plan types
+export interface MembershipPlan {
+  id: number
+  clubId: number
+  activityId?: number
+  activityName?: string
+  name: string
+  description?: string
+  durationDays: number
+  price: number
+  isActive: boolean
+}
+
+export interface CreateMembershipPlanRequest {
+  activityId?: number
+  name: string
+  description?: string
+  durationDays: number
+  price: number
+}
+
+// User Membership types
+export interface UserMembership {
+  id: number
+  userId: number
+  planId: number
+  clubId: number
+  startDate: string // YYYY-MM-DD
+  endDate?: string // YYYY-MM-DD
+  status: 'PENDING' | 'ACTIVE' | 'EXPIRED' | 'SUSPENDED' | 'CANCELLED'
+  paymentId?: number
+  notes?: string
+  // Enriched fields
+  planName?: string
+  clubName?: string
+  userName?: string
+  userPhone?: string
+}
+
+export interface PurchaseMembershipRequest {
+  planId: number
+  clubId: number
+  startDate?: string
+  endDate?: string
+  paymentId?: number
+  notes?: string
+}
+
+export interface ValidateMembershipResponse {
+  valid: boolean
+  message: string
+  membershipId?: number
+  planId?: number
+  endDate?: string
+}
+
+// Attendance types
+export interface Attendance {
+  id: number
+  userId: number
+  membershipId: number
+  clubId: number
+  sessionId?: number
+  checkInTime: string // ISO datetime
+  recordedByUserId?: number
+  notes?: string
+  // Enriched fields
+  userName?: string
+  userPhone?: string
+  planName?: string
+  sessionName?: string
+}
+
+export interface CheckInRequest {
+  userId: number
+  membershipId: number
+  clubId: number
+  sessionId?: number
   notes?: string
 }
 

@@ -1,5 +1,13 @@
 import { apiClient } from './client'
-import type { ApiResponse, PendingPayment, Payment, RecordPaymentRequest } from '../types'
+import type { ApiResponse, PageResponse, PendingPayment, Payment, PaymentHistory, RecordPaymentRequest } from '../types'
+
+export interface PaymentHistoryParams {
+  search?: string
+  page?: number
+  size?: number
+  sortBy?: string
+  sortDir?: 'asc' | 'desc'
+}
 
 export const paymentsApi = {
   /**
@@ -19,4 +27,18 @@ export const paymentsApi = {
    */
   recordPayment: (data: RecordPaymentRequest) =>
     apiClient.post<ApiResponse<Payment>>('/v1/payments', data),
+
+  /**
+   * Get payment history for a club with pagination and search (admin/owner only)
+   */
+  getPaymentHistory: (clubId: number, params?: PaymentHistoryParams) =>
+    apiClient.get<ApiResponse<PageResponse<PaymentHistory>>>(`/v1/payments/club/${clubId}/history`, {
+      params: {
+        search: params?.search || '',
+        page: params?.page || 0,
+        size: params?.size || 20,
+        sortBy: params?.sortBy || 'paidAt',
+        sortDir: params?.sortDir || 'desc',
+      },
+    }),
 }
