@@ -15,8 +15,13 @@ import ProfilePage from './pages/ProfilePage'
 import AdminUsersPage from './pages/AdminUsersPage'
 import AdminClubsPage from './pages/AdminClubsPage'
 import AdminActivitiesPage from './pages/AdminActivitiesPage'
+import AdminSchedulesPage from './pages/AdminSchedulesPage'
+import AdminMembershipPlansPage from './pages/AdminMembershipPlansPage'
 import StaffSessionsPage from './pages/StaffSessionsPage'
 import StaffPaymentsPage from './pages/StaffPaymentsPage'
+import StaffCheckInPage from './pages/StaffCheckInPage'
+import UserMembershipsPage from './pages/UserMembershipsPage'
+import PurchaseMembershipPage from './pages/PurchaseMembershipPage'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -103,6 +108,24 @@ function App() {
           }
         />
 
+        {/* Memberships routes */}
+        <Route
+          path="/memberships"
+          element={
+            <ProtectedRoute>
+              <UserMembershipsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/memberships/purchase"
+          element={
+            <ProtectedRoute>
+              <PurchaseMembershipPage />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Admin-only routes */}
         <Route
           path="/admin/users"
@@ -125,6 +148,22 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER]}>
               <AdminActivitiesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/schedules"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER]}>
+              <AdminSchedulesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/membership-plans"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER]}>
+              <AdminMembershipPlansPage />
             </ProtectedRoute>
           }
         />
@@ -158,8 +197,7 @@ function App() {
           path="/staff/checkin"
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER, ROLES.RECEPTIONIST]}>
-              {/* TODO: Add checkin component */}
-              <div className="text-white p-8">ورود به کلاس (Coming Soon)</div>
+              <StaffCheckInPage />
             </ProtectedRoute>
           }
         />

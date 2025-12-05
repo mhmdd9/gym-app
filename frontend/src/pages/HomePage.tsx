@@ -102,6 +102,30 @@ export default function HomePage() {
                   <p className="text-slate-500 text-sm">تعریف فعالیت‌های ورزشی</p>
                 </Link>
               )}
+              {hasRole(ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER) && (
+                <Link
+                  to="/admin/schedules"
+                  className="card text-right hover:border-indigo-500/50 transition-colors group cursor-pointer border-indigo-500/20"
+                >
+                  <span className="text-3xl mb-3 block">🗓️</span>
+                  <h3 className="text-white font-medium group-hover:text-indigo-400 transition-colors">
+                    برنامه‌ریزی تکراری
+                  </h3>
+                  <p className="text-slate-500 text-sm">تنظیم برنامه هفتگی</p>
+                </Link>
+              )}
+              {hasRole(ROLES.ADMIN, ROLES.GYM_OWNER, ROLES.MANAGER) && (
+                <Link
+                  to="/admin/membership-plans"
+                  className="card text-right hover:border-teal-500/50 transition-colors group cursor-pointer border-teal-500/20"
+                >
+                  <span className="text-3xl mb-3 block">💳</span>
+                  <h3 className="text-white font-medium group-hover:text-teal-400 transition-colors">
+                    مدیریت اشتراک‌ها
+                  </h3>
+                  <p className="text-slate-500 text-sm">تعریف پلن‌های اشتراک</p>
+                </Link>
+              )}
               {canManageSessions && (
                 <Link
                   to="/staff/sessions"
@@ -142,8 +166,8 @@ export default function HomePage() {
         <h2 className="text-lg font-semibold text-white mb-4">دسترسی سریع</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
+            { icon: '💳', label: 'اشتراک‌ها', desc: 'اشتراک‌های من', to: '/memberships' },
             { icon: '🏋️', label: 'کلاس‌ها', desc: 'مشاهده کلاس‌های ورزشی', to: '/classes' },
-            { icon: '📅', label: 'رزروها', desc: 'رزروهای شما', to: '/reservations' },
             { icon: '🏢', label: 'باشگاه‌ها', desc: 'لیست باشگاه‌ها', to: '/clubs' },
             { icon: '👤', label: 'پروفایل', desc: 'تنظیمات حساب', to: '/profile' },
           ].map((item) => (
