@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { clubsApi } from '../api/clubs'
 import { sessionsApi } from '../api/sessions'
 import PersianDatePicker from '../components/PersianDatePicker'
+import { SearchableClubSelect } from '../components/SearchableClubSelect'
 import type { Club, ClassSession, Activity, Trainer, CreateClassSessionRequest } from '../types'
 
 // Status display config
@@ -254,18 +255,11 @@ export default function StaffSessionsPage() {
         {/* Club Selector */}
         {!isLoadingClubs && clubs.length > 0 && (
           <div className="mb-6">
-            <label className="block text-slate-400 text-sm mb-2">انتخاب باشگاه</label>
-            <select
-              value={selectedClubId || ''}
-              onChange={(e) => setSelectedClubId(Number(e.target.value))}
-              className="input-field w-full max-w-md"
-            >
-              {clubs.map((club) => (
-                <option key={club.id} value={club.id}>
-                  {club.name} - {club.city}
-                </option>
-              ))}
-            </select>
+            <SearchableClubSelect
+              clubs={clubs}
+              selectedClubId={selectedClubId}
+              onSelect={(clubId) => setSelectedClubId(clubId)}
+            />
           </div>
         )}
 

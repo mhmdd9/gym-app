@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { clubsApi } from '../api/clubs'
 import { sessionsApi } from '../api/sessions'
+import { SearchableClubSelect } from '../components/SearchableClubSelect'
 import type { Club, Activity, CreateActivityRequest } from '../types'
 
 // Intensity level config
@@ -9,6 +10,12 @@ const intensityConfig: Record<string, { label: string; className: string }> = {
   BEGINNER: { label: 'مبتدی', className: 'bg-green-500/20 text-green-400' },
   INTERMEDIATE: { label: 'متوسط', className: 'bg-yellow-500/20 text-yellow-400' },
   ADVANCED: { label: 'پیشرفته', className: 'bg-red-500/20 text-red-400' },
+}
+
+// Activity type config
+const activityTypeConfig: Record<string, { label: string; className: string }> = {
+  CLASS: { label: 'کلاس', className: 'bg-blue-500/20 text-blue-400' },
+  OPEN_GYM: { label: 'سالن آزاد', className: 'bg-purple-500/20 text-purple-400' },
 }
 
 // Common categories
@@ -29,6 +36,7 @@ const emptyForm: CreateActivityRequest = {
   defaultCapacity: 20,
   intensityLevel: '',
   category: '',
+  activityType: 'CLASS',
 }
 
 export default function AdminActivitiesPage() {
@@ -105,6 +113,7 @@ export default function AdminActivitiesPage() {
       defaultCapacity: activity.defaultCapacity,
       intensityLevel: activity.intensityLevel || '',
       category: activity.category || '',
+      activityType: activity.activityType || 'CLASS',
     })
     setFormError(null)
     setIsModalOpen(true)
@@ -218,18 +227,11 @@ export default function AdminActivitiesPage() {
         {/* Club Selector */}
         {!isLoadingClubs && clubs.length > 0 && (
           <div className="mb-6">
-            <label className="block text-slate-400 text-sm mb-2">انتخاب باشگاه</label>
-            <select
-              value={selectedClubId || ''}
-              onChange={(e) => setSelectedClubId(Number(e.target.value))}
-              className="input-field w-full max-w-md"
-            >
-              {clubs.map((club) => (
-                <option key={club.id} value={club.id}>
-                  {club.name} - {club.city}
-                </option>
-              ))}
-            </select>
+            <SearchableClubSelect
+              clubs={clubs}
+              selectedClubId={selectedClubId}
+              onSelect={(clubId) => setSelectedClubId(clubId)}
+            />
           </div>
         )}
 
@@ -290,7 +292,14 @@ export default function AdminActivitiesPage() {
                       <p className="text-slate-400 text-sm">{activity.category}</p>
                     )}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        activityTypeConfig[activity.activityType || 'CLASS']?.className || 'bg-blue-500/20 text-blue-400'
+                      }`}
+                    >
+                      {activityTypeConfig[activity.activityType || 'CLASS']?.label || 'کلاس'}
+                    </span>
                     {activity.intensityLevel && (
                       <span
                         className={`px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -456,6 +465,65 @@ export default function AdminActivitiesPage() {
                     min={1}
                     className="input-field w-full"
                   />
+                </div>
+              </div>
+
+              {/* Activity Type */}
+              <div>
+                <label className="block text-slate-400 text-sm mb-2">
+                  نوع فعالیت <span className="text-red-400">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <label
+                    className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                      formData.activityType === 'CLASS'
+                        ? 'border-blue-500 bg-blue-500/10'
+                        : 'border-slate-700 hover:border-slate-600'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="activityType"
+                      value="CLASS"
+                      checked={formData.activityType === 'CLASS'}
+                      onChange={handleInputChange}
+                      className="sr-only"
+                    />
+                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-white font-medium text-sm">کلاس</p>
+                      <p className="text-slate-500 text-xs">زمان شروع و پایان مشخص</p>
+                    </div>
+                  </label>
+                  <label
+                    className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                      formData.activityType === 'OPEN_GYM'
+                        ? 'border-purple-500 bg-purple-500/10'
+                        : 'border-slate-700 hover:border-slate-600'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="activityType"
+                      value="OPEN_GYM"
+                      checked={formData.activityType === 'OPEN_GYM'}
+                      onChange={handleInputChange}
+                      className="sr-only"
+                    />
+                    <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-white font-medium text-sm">سالن آزاد</p>
+                      <p className="text-slate-500 text-xs">ورود آزاد در بازه زمانی</p>
+                    </div>
+                  </label>
                 </div>
               </div>
 
