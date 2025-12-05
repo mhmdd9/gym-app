@@ -18,6 +18,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     Optional<Payment> findByReservationId(Long reservationId);
 
+    Optional<Payment> findByMembershipId(Long membershipId);
+
     Page<Payment> findByUserId(Long userId, Pageable pageable);
 
     Page<Payment> findByClubId(Long clubId, Pageable pageable);

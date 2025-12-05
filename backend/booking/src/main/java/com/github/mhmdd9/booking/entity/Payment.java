@@ -16,8 +16,11 @@ import java.time.LocalDateTime;
 @Builder
 public class Payment extends BaseEntity {
 
-    @Column(name = "reservation_id", nullable = false)
+    @Column(name = "reservation_id")
     private Long reservationId;
+
+    @Column(name = "membership_id")
+    private Long membershipId;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
