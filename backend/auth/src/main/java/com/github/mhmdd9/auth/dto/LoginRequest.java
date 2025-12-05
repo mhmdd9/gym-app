@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class LoginRequest {
 
     @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "^09\\d{9}$", message = "Invalid phone number format. Use format: 09XXXXXXXXX")
+    @Pattern(regexp = "^09\\d{9}$", message = "فرمت شماره تلفن نامعتبر است (مثال: ۰۹۱۲۳۴۵۶۷۸۹)")
     private String phoneNumber;
 }
 

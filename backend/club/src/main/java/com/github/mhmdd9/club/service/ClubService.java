@@ -32,7 +32,7 @@ public class ClubService {
     @Transactional(readOnly = true)
     public ClubDto getClubById(Long id) {
         Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Club", id));
+                .orElseThrow(() -> new ResourceNotFoundException("باشگاه", id));
         return ClubDto.from(club);
     }
 
@@ -67,11 +67,11 @@ public class ClubService {
     @Transactional
     public ClubDto updateClub(Long id, CreateClubRequest request, Long userId, boolean isAdmin) {
         Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Club", id));
+                .orElseThrow(() -> new ResourceNotFoundException("باشگاه", id));
 
         // Check ownership unless admin
         if (!isAdmin && !club.getOwnerId().equals(userId)) {
-            throw new ForbiddenException("You don't have permission to update this club");
+            throw new ForbiddenException("شما اجازه ویرایش این باشگاه را ندارید");
         }
 
         club.setName(request.getName());
@@ -92,11 +92,11 @@ public class ClubService {
     @Transactional
     public void deleteClub(Long id, Long userId, boolean isAdmin) {
         Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Club", id));
+                .orElseThrow(() -> new ResourceNotFoundException("باشگاه", id));
 
         // Check ownership unless admin
         if (!isAdmin && !club.getOwnerId().equals(userId)) {
-            throw new ForbiddenException("You don't have permission to delete this club");
+            throw new ForbiddenException("شما اجازه حذف این باشگاه را ندارید");
         }
 
         // Soft delete

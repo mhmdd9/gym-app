@@ -56,11 +56,11 @@ public class ReservationService {
     @Transactional(readOnly = true)
     public ReservationDto getReservationById(Long id, Long userId, boolean isStaff) {
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Reservation", id));
+                .orElseThrow(() -> new ResourceNotFoundException("رزرو", id));
 
         // Check ownership unless staff
         if (!isStaff && !reservation.getUserId().equals(userId)) {
-            throw new ForbiddenException("You don't have permission to view this reservation");
+            throw new ForbiddenException("شما اجازه مشاهده این رزرو را ندارید");
         }
 
         return ReservationDto.from(reservation);
@@ -70,20 +70,20 @@ public class ReservationService {
     public ReservationDto createReservation(CreateReservationRequest request, Long userId) {
         // Check if already booked
         if (reservationRepository.existsByUserIdAndSessionId(userId, request.getSessionId())) {
-            throw new ConflictException("You have already booked this session");
+            throw new ConflictException("شما قبلاً این جلسه را رزرو کرده‌اید");
         }
 
         // Get session with optimistic lock
         ClassSession session = sessionRepository.findByIdWithLock(request.getSessionId())
-                .orElseThrow(() -> new ResourceNotFoundException("ClassSession", request.getSessionId()));
+                .orElseThrow(() -> new ResourceNotFoundException("جلسه", request.getSessionId()));
 
         // Check availability
         if (!session.hasAvailableSpots()) {
-            throw new BusinessException("Session is fully booked", "SESSION_FULL");
+            throw new BusinessException("ظرفیت جلسه تکمیل شده است", "SESSION_FULL");
         }
 
         if (session.getStatus() != ClassSession.SessionStatus.SCHEDULED) {
-            throw new BusinessException("Session is not available for booking", "SESSION_UNAVAILABLE");
+            throw new BusinessException("این جلسه برای رزرو در دسترس نیست", "SESSION_UNAVAILABLE");
         }
 
         try {
@@ -107,22 +107,22 @@ public class ReservationService {
             return ReservationDto.from(reservation);
 
         } catch (ObjectOptimisticLockingFailureException e) {
-            throw new ConflictException("Session was updated by another user. Please try again.");
+            throw new ConflictException("جلسه توسط کاربر دیگری تغییر کرده. لطفاً دوباره تلاش کنید.");
         }
     }
 
     @Transactional
     public ReservationDto cancelReservation(Long id, Long userId, String reason, boolean isStaff) {
         Reservation reservation = reservationRepository.findByIdWithLock(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Reservation", id));
+                .orElseThrow(() -> new ResourceNotFoundException("رزرو", id));
 
         // Check ownership unless staff
         if (!isStaff && !reservation.getUserId().equals(userId)) {
-            throw new ForbiddenException("You don't have permission to cancel this reservation");
+            throw new ForbiddenException("شما اجازه لغو این رزرو را ندارید");
         }
 
         if (!reservation.canCancel()) {
-            throw new BusinessException("Reservation cannot be cancelled", "CANNOT_CANCEL");
+            throw new BusinessException("این رزرو قابل لغو نیست", "CANNOT_CANCEL");
         }
 
         // Decrement booked count
@@ -144,10 +144,10 @@ public class ReservationService {
     @Transactional
     public ReservationDto checkIn(Long id) {
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Reservation", id));
+                .orElseThrow(() -> new ResourceNotFoundException("رزرو", id));
 
         if (!reservation.canCheckIn()) {
-            throw new BusinessException("Reservation cannot be checked in", "CANNOT_CHECK_IN");
+            throw new BusinessException("امکان ثبت ورود برای این رزرو وجود ندارد", "CANNOT_CHECK_IN");
         }
 
         reservation.setCheckedInAt(LocalDateTime.now());

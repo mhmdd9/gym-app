@@ -51,7 +51,7 @@ public class OtpService {
         Bucket bucket = buckets.computeIfAbsent(phoneNumber, this::createBucket);
         if (!bucket.tryConsume(1)) {
             throw new RateLimitExceededException(
-                    "Too many OTP requests. Please wait before requesting another code.");
+                    "درخواست‌های زیادی ارسال شده. لطفاً کمی صبر کنید.");
         }
 
         // Additional hourly limit check from database
@@ -61,7 +61,7 @@ public class OtpService {
         );
         if (hourlyCount >= maxAttemptsPerHour) {
             throw new RateLimitExceededException(
-                    "Hourly OTP limit exceeded. Please try again later.");
+                    "محدودیت ساعتی کد تایید. لطفاً بعداً تلاش کنید.");
         }
 
         // Generate OTP code
@@ -90,7 +90,7 @@ public class OtpService {
         );
 
         if (otpOptional.isEmpty()) {
-            throw new BusinessException("Invalid or expired OTP", "INVALID_OTP");
+            throw new BusinessException("کد تایید نامعتبر یا منقضی شده است", "INVALID_OTP");
         }
 
         OtpCode otpCode = otpOptional.get();
@@ -100,7 +100,7 @@ public class OtpService {
             otpCode.setIsUsed(true);
             otpCodeRepository.save(otpCode);
             throw new BusinessException(
-                    "Too many failed attempts. Please request a new OTP.", 
+                    "تعداد تلاش‌های ناموفق زیاد. لطفاً کد جدید درخواست کنید.", 
                     "OTP_MAX_ATTEMPTS"
             );
         }
@@ -108,7 +108,7 @@ public class OtpService {
         if (!otpCode.getCode().equals(code)) {
             otpCode.incrementAttempts();
             otpCodeRepository.save(otpCode);
-            throw new BusinessException("Invalid OTP code", "INVALID_OTP");
+            throw new BusinessException("کد تایید اشتباه است", "INVALID_OTP");
         }
 
         // Mark OTP as used

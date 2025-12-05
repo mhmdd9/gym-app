@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
         User user = userRepository.findByPhoneNumberWithRoles(phoneNumber)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        "User not found with phone number: " + phoneNumber));
+                        "کاربری با این شماره تلفن یافت نشد: " + phoneNumber));
         
         return UserPrincipal.from(user);
     }
@@ -30,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserById(Long id) {
         User user = userRepository.findByIdWithRoles(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User", id));
+                .orElseThrow(() -> new ResourceNotFoundException("کاربر", id));
         
         return UserPrincipal.from(user);
     }

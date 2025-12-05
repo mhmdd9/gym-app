@@ -50,21 +50,21 @@ public class UserManagementService {
     @Transactional(readOnly = true)
     public UserDto getUserById(Long userId) {
         User user = userRepository.findByIdWithRoles(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+                .orElseThrow(() -> new ResourceNotFoundException("کاربر", userId));
         return UserDto.from(user);
     }
 
     @Transactional
     public UserDto updateUserRoles(Long userId, UpdateUserRolesRequest request) {
         User user = userRepository.findByIdWithRoles(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+                .orElseThrow(() -> new ResourceNotFoundException("کاربر", userId));
 
         // Validate all requested roles exist
         Set<Role> newRoles = new HashSet<>();
         for (String roleName : request.getRoles()) {
             Role role = roleRepository.findByName(roleName)
                     .orElseThrow(() -> new BusinessException(
-                            "Role not found: " + roleName, "INVALID_ROLE"));
+                            "نقش یافت نشد: " + roleName, "INVALID_ROLE"));
             newRoles.add(role);
         }
 
@@ -80,7 +80,7 @@ public class UserManagementService {
     @Transactional
     public UserDto updateUserStatus(Long userId, UpdateUserStatusRequest request) {
         User user = userRepository.findByIdWithRoles(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+                .orElseThrow(() -> new ResourceNotFoundException("کاربر", userId));
 
         user.setIsActive(request.getIsActive());
         userRepository.save(user);

@@ -127,10 +127,10 @@ public class MembershipService {
     @Transactional
     public UserMembershipDto approveMembership(Long membershipId, ApproveMembershipRequest request, Long recordedBy) {
         UserMembership membership = membershipRepository.findById(membershipId)
-                .orElseThrow(() -> new IllegalArgumentException("Membership not found: " + membershipId));
+                .orElseThrow(() -> new IllegalArgumentException("اشتراک یافت نشد: " + membershipId));
         
         if (membership.getStatus() != UserMembership.MembershipStatus.PENDING) {
-            throw new IllegalStateException("Only pending memberships can be approved");
+            throw new IllegalStateException("فقط اشتراک‌های در انتظار پرداخت قابل تایید هستند");
         }
 
         // Create payment record
@@ -166,10 +166,10 @@ public class MembershipService {
     @Transactional
     public void rejectMembership(Long membershipId, String reason) {
         UserMembership membership = membershipRepository.findById(membershipId)
-                .orElseThrow(() -> new IllegalArgumentException("Membership not found: " + membershipId));
+                .orElseThrow(() -> new IllegalArgumentException("اشتراک یافت نشد: " + membershipId));
         
         if (membership.getStatus() != UserMembership.MembershipStatus.PENDING) {
-            throw new IllegalStateException("Only pending memberships can be rejected");
+            throw new IllegalStateException("فقط اشتراک‌های در انتظار پرداخت قابل رد شدن هستند");
         }
         
         membership.setStatus(UserMembership.MembershipStatus.CANCELLED);
@@ -274,7 +274,7 @@ public class MembershipService {
     @Transactional
     public void suspendMembership(Long membershipId) {
         UserMembership membership = membershipRepository.findById(membershipId)
-                .orElseThrow(() -> new IllegalArgumentException("Membership not found: " + membershipId));
+                .orElseThrow(() -> new IllegalArgumentException("اشتراک یافت نشد: " + membershipId));
         membership.setStatus(UserMembership.MembershipStatus.SUSPENDED);
         membershipRepository.save(membership);
         log.info("Suspended membership: {}", membershipId);
@@ -283,7 +283,7 @@ public class MembershipService {
     @Transactional
     public void cancelMembership(Long membershipId) {
         UserMembership membership = membershipRepository.findById(membershipId)
-                .orElseThrow(() -> new IllegalArgumentException("Membership not found: " + membershipId));
+                .orElseThrow(() -> new IllegalArgumentException("اشتراک یافت نشد: " + membershipId));
         membership.setStatus(UserMembership.MembershipStatus.CANCELLED);
         membershipRepository.save(membership);
         log.info("Cancelled membership: {}", membershipId);

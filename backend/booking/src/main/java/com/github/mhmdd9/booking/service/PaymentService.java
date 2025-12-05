@@ -56,15 +56,15 @@ public class PaymentService {
     @Transactional
     public PaymentDto recordPayment(RecordPaymentRequest request, Long recordedBy) {
         Reservation reservation = reservationRepository.findById(request.getReservationId())
-                .orElseThrow(() -> new ResourceNotFoundException("Reservation", request.getReservationId()));
+                .orElseThrow(() -> new ResourceNotFoundException("رزرو", request.getReservationId()));
 
         // Check if payment already exists
         if (paymentRepository.findByReservationId(request.getReservationId()).isPresent()) {
-            throw new BusinessException("Payment already recorded for this reservation", "PAYMENT_EXISTS");
+            throw new BusinessException("پرداخت قبلاً برای این رزرو ثبت شده است", "PAYMENT_EXISTS");
         }
 
         if (reservation.getStatus() != Reservation.ReservationStatus.PENDING_PAYMENT) {
-            throw new BusinessException("Reservation is not pending payment", "INVALID_STATUS");
+            throw new BusinessException("رزرو در انتظار پرداخت نیست", "INVALID_STATUS");
         }
 
         // Create payment record

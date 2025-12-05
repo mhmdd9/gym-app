@@ -45,22 +45,22 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public ScheduleDto getScheduleById(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedule", id));
+                .orElseThrow(() -> new ResourceNotFoundException("برنامه", id));
         return ScheduleDto.from(schedule);
     }
 
     @Transactional
     public ScheduleDto createSchedule(Long clubId, CreateScheduleRequest request) {
         Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new ResourceNotFoundException("Club", clubId));
+                .orElseThrow(() -> new ResourceNotFoundException("باشگاه", clubId));
 
         ActivityDefinition activity = activityRepository.findById(request.getActivityId())
-                .orElseThrow(() -> new ResourceNotFoundException("Activity", request.getActivityId()));
+                .orElseThrow(() -> new ResourceNotFoundException("فعالیت", request.getActivityId()));
 
         Trainer trainer = null;
         if (request.getTrainerId() != null) {
             trainer = trainerRepository.findById(request.getTrainerId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Trainer", request.getTrainerId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("مربی", request.getTrainerId()));
         }
 
         Set<DayOfWeek> daysOfWeek = request.getDaysOfWeek().stream()
@@ -93,15 +93,15 @@ public class ScheduleService {
     @Transactional
     public ScheduleDto updateSchedule(Long id, CreateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedule", id));
+                .orElseThrow(() -> new ResourceNotFoundException("برنامه", id));
 
         ActivityDefinition activity = activityRepository.findById(request.getActivityId())
-                .orElseThrow(() -> new ResourceNotFoundException("Activity", request.getActivityId()));
+                .orElseThrow(() -> new ResourceNotFoundException("فعالیت", request.getActivityId()));
 
         Trainer trainer = null;
         if (request.getTrainerId() != null) {
             trainer = trainerRepository.findById(request.getTrainerId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Trainer", request.getTrainerId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("مربی", request.getTrainerId()));
         }
 
         Set<DayOfWeek> daysOfWeek = request.getDaysOfWeek().stream()
@@ -126,7 +126,7 @@ public class ScheduleService {
     @Transactional
     public void deleteSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedule", id));
+                .orElseThrow(() -> new ResourceNotFoundException("برنامه", id));
         schedule.setIsActive(false);
         scheduleRepository.save(schedule);
         log.info("Deactivated schedule {}", id);
@@ -135,7 +135,7 @@ public class ScheduleService {
     @Transactional
     public ScheduleDto toggleScheduleStatus(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedule", id));
+                .orElseThrow(() -> new ResourceNotFoundException("برنامه", id));
         schedule.setIsActive(!schedule.getIsActive());
         schedule = scheduleRepository.save(schedule);
         log.info("Toggled schedule {} status to {}", id, schedule.getIsActive());

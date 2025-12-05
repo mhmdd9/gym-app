@@ -35,14 +35,14 @@ public class AuthService {
         // Check if user already exists
         if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
             throw new BusinessException(
-                    "User with this phone number already exists", 
+                    "این شماره تلفن قبلاً ثبت شده است", 
                     "USER_EXISTS"
             );
         }
 
         // Get default role
         Role memberRole = roleRepository.findByName(Role.MEMBER)
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "name", Role.MEMBER));
+                .orElseThrow(() -> new ResourceNotFoundException("نقش", "name", Role.MEMBER));
 
         // Create new user
         User user = User.builder()
@@ -71,7 +71,7 @@ public class AuthService {
                         "User", "phone number", request.getPhoneNumber()));
 
         if (!user.getIsActive()) {
-            throw new BusinessException("User account is deactivated", "USER_INACTIVE");
+            throw new BusinessException("حساب کاربری غیرفعال شده است", "USER_INACTIVE");
         }
 
         // Generate and send OTP
@@ -123,15 +123,15 @@ public class AuthService {
     @Transactional
     public AuthResponse refreshToken(RefreshTokenRequest request) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(request.getRefreshToken())
-                .orElseThrow(() -> new UnauthorizedException("Invalid refresh token"));
+                .orElseThrow(() -> new UnauthorizedException("توکن نامعتبر است"));
 
         if (!refreshToken.isValid()) {
-            throw new UnauthorizedException("Refresh token is expired or revoked");
+            throw new UnauthorizedException("توکن منقضی شده یا باطل شده است");
         }
 
         User user = refreshToken.getUser();
         if (!user.getIsActive()) {
-            throw new BusinessException("User account is deactivated", "USER_INACTIVE");
+            throw new BusinessException("حساب کاربری غیرفعال شده است", "USER_INACTIVE");
         }
 
         // Revoke old refresh token
@@ -162,7 +162,7 @@ public class AuthService {
     @Transactional
     public void logout(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+                .orElseThrow(() -> new ResourceNotFoundException("کاربر", userId));
         
         refreshTokenRepository.revokeAllByUser(user);
         log.info("User logged out: {}", user.getPhoneNumber());
@@ -171,7 +171,7 @@ public class AuthService {
     @Transactional(readOnly = true)
     public UserDto getUserById(Long userId) {
         User user = userRepository.findByIdWithRoles(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+                .orElseThrow(() -> new ResourceNotFoundException("کاربر", userId));
         return UserDto.from(user);
     }
 }

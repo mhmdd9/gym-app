@@ -37,7 +37,7 @@ public class AttendanceService {
     public AttendanceDto checkIn(CheckInRequest request, Long staffUserId) {
         // Validate membership
         UserMembership membership = membershipRepository.findById(request.getMembershipId())
-                .orElseThrow(() -> new IllegalArgumentException("Membership not found: " + request.getMembershipId()));
+                .orElseThrow(() -> new IllegalArgumentException("اشتراک یافت نشد: " + request.getMembershipId()));
 
         if (!membership.isValid()) {
             throw new IllegalStateException("اشتراک معتبر نیست");

@@ -52,27 +52,27 @@ public class ClassSessionService {
     @Transactional(readOnly = true)
     public ClassSessionDto getSessionById(Long id) {
         ClassSession session = sessionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ClassSession", id));
+                .orElseThrow(() -> new ResourceNotFoundException("جلسه", id));
         return ClassSessionDto.from(session);
     }
 
     @Transactional
     public ClassSessionDto createSession(CreateClassSessionRequest request) {
         Club club = clubRepository.findById(request.getClubId())
-                .orElseThrow(() -> new ResourceNotFoundException("Club", request.getClubId()));
+                .orElseThrow(() -> new ResourceNotFoundException("باشگاه", request.getClubId()));
 
         ActivityDefinition activity = activityRepository.findById(request.getActivityId())
-                .orElseThrow(() -> new ResourceNotFoundException("Activity", request.getActivityId()));
+                .orElseThrow(() -> new ResourceNotFoundException("فعالیت", request.getActivityId()));
 
         Trainer trainer = null;
         if (request.getTrainerId() != null) {
             trainer = trainerRepository.findById(request.getTrainerId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Trainer", request.getTrainerId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("مربی", request.getTrainerId()));
         }
 
         // Validate times
         if (request.getEndTime().isBefore(request.getStartTime())) {
-            throw new BusinessException("End time must be after start time", "INVALID_TIME");
+            throw new BusinessException("زمان پایان باید بعد از زمان شروع باشد", "INVALID_TIME");
         }
 
         ClassSession session = ClassSession.builder()
@@ -95,10 +95,10 @@ public class ClassSessionService {
     @Transactional
     public void cancelSession(Long id) {
         ClassSession session = sessionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ClassSession", id));
+                .orElseThrow(() -> new ResourceNotFoundException("جلسه", id));
 
         if (session.getStatus() == ClassSession.SessionStatus.CANCELLED) {
-            throw new BusinessException("Session is already cancelled", "ALREADY_CANCELLED");
+            throw new BusinessException("این جلسه قبلاً لغو شده است", "ALREADY_CANCELLED");
         }
 
         session.setStatus(ClassSession.SessionStatus.CANCELLED);

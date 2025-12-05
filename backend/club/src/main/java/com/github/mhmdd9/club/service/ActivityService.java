@@ -39,14 +39,14 @@ public class ActivityService {
     @Transactional(readOnly = true)
     public ActivityDto getActivityById(Long id) {
         ActivityDefinition activity = activityRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Activity", id));
+                .orElseThrow(() -> new ResourceNotFoundException("فعالیت", id));
         return ActivityDto.from(activity);
     }
 
     @Transactional
     public ActivityDto createActivity(Long clubId, CreateActivityRequest request) {
         Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new ResourceNotFoundException("Club", clubId));
+                .orElseThrow(() -> new ResourceNotFoundException("باشگاه", clubId));
 
         ActivityDefinition.IntensityLevel level = null;
         if (request.getIntensityLevel() != null && !request.getIntensityLevel().isEmpty()) {
@@ -78,7 +78,7 @@ public class ActivityService {
     @Transactional
     public ActivityDto updateActivity(Long id, CreateActivityRequest request) {
         ActivityDefinition activity = activityRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Activity", id));
+                .orElseThrow(() -> new ResourceNotFoundException("فعالیت", id));
 
         ActivityDefinition.IntensityLevel level = null;
         if (request.getIntensityLevel() != null && !request.getIntensityLevel().isEmpty()) {
@@ -106,7 +106,7 @@ public class ActivityService {
     @Transactional
     public void deleteActivity(Long id) {
         ActivityDefinition activity = activityRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Activity", id));
+                .orElseThrow(() -> new ResourceNotFoundException("فعالیت", id));
 
         activity.setIsActive(false);
         activityRepository.save(activity);
@@ -116,7 +116,7 @@ public class ActivityService {
     @Transactional
     public ActivityDto toggleActivityStatus(Long id) {
         ActivityDefinition activity = activityRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Activity", id));
+                .orElseThrow(() -> new ResourceNotFoundException("فعالیت", id));
 
         activity.setIsActive(!activity.getIsActive());
         activity = activityRepository.save(activity);

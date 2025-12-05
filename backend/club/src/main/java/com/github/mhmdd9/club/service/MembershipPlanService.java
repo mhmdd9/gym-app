@@ -42,7 +42,7 @@ public class MembershipPlanService {
     public MembershipPlanDto getPlanById(Long id) {
         MembershipPlan plan = planRepository.findByIdWithActivity(id);
         if (plan == null) {
-            throw new IllegalArgumentException("Membership plan not found: " + id);
+            throw new IllegalArgumentException("پلن اشتراک یافت نشد: " + id);
         }
         return toDto(plan);
     }
@@ -50,12 +50,12 @@ public class MembershipPlanService {
     @Transactional
     public MembershipPlanDto createPlan(Long clubId, CreateMembershipPlanRequest request) {
         Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new IllegalArgumentException("Club not found: " + clubId));
+                .orElseThrow(() -> new IllegalArgumentException("باشگاه یافت نشد: " + clubId));
 
         ActivityDefinition activity = null;
         if (request.getActivityId() != null) {
             activity = activityRepository.findById(request.getActivityId())
-                    .orElseThrow(() -> new IllegalArgumentException("Activity not found: " + request.getActivityId()));
+                    .orElseThrow(() -> new IllegalArgumentException("فعالیت یافت نشد: " + request.getActivityId()));
         }
 
         MembershipPlan plan = MembershipPlan.builder()
@@ -76,12 +76,12 @@ public class MembershipPlanService {
     @Transactional
     public MembershipPlanDto updatePlan(Long planId, CreateMembershipPlanRequest request) {
         MembershipPlan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new IllegalArgumentException("Membership plan not found: " + planId));
+                .orElseThrow(() -> new IllegalArgumentException("پلن اشتراک یافت نشد: " + planId));
 
         ActivityDefinition activity = null;
         if (request.getActivityId() != null) {
             activity = activityRepository.findById(request.getActivityId())
-                    .orElseThrow(() -> new IllegalArgumentException("Activity not found: " + request.getActivityId()));
+                    .orElseThrow(() -> new IllegalArgumentException("فعالیت یافت نشد: " + request.getActivityId()));
         }
 
         plan.setActivity(activity);
@@ -98,7 +98,7 @@ public class MembershipPlanService {
     @Transactional
     public void togglePlanStatus(Long planId) {
         MembershipPlan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new IllegalArgumentException("Membership plan not found: " + planId));
+                .orElseThrow(() -> new IllegalArgumentException("پلن اشتراک یافت نشد: " + planId));
         plan.setIsActive(!plan.getIsActive());
         planRepository.save(plan);
         log.info("Toggled membership plan {} status to: {}", planId, plan.getIsActive());
@@ -107,7 +107,7 @@ public class MembershipPlanService {
     @Transactional
     public void deletePlan(Long planId) {
         MembershipPlan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new IllegalArgumentException("Membership plan not found: " + planId));
+                .orElseThrow(() -> new IllegalArgumentException("پلن اشتراک یافت نشد: " + planId));
         plan.setIsActive(false);
         planRepository.save(plan);
         log.info("Deactivated membership plan: {}", planId);

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class VerifyOtpRequest {
 
     @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "^09\\d{9}$", message = "Invalid phone number format")
+    @Pattern(regexp = "^09\\d{9}$", message = "فرمت شماره تلفن نامعتبر است")
     private String phoneNumber;
 
     @NotBlank(message = "OTP code is required")
