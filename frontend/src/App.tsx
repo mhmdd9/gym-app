@@ -13,6 +13,7 @@ import ClassesPage from './pages/ClassesPage'
 import ReservationsPage from './pages/ReservationsPage'
 import ProfilePage from './pages/ProfilePage'
 import AdminUsersPage from './pages/AdminUsersPage'
+import AdminClubsPage from './pages/AdminClubsPage'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -109,10 +110,18 @@ function App() {
           }
         />
         <Route
+          path="/admin/clubs"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER]}>
+              <AdminClubsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin"
           element={
             <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.GYM_OWNER]}>
-              <Navigate to="/admin/users" replace />
+              <Navigate to="/admin/clubs" replace />
             </ProtectedRoute>
           }
         />
